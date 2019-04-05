@@ -270,7 +270,7 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
     );
   }
 
-  _buildSidekickBuilder(BuildContext context, _SidekickMission<T> mission,
+  SidekickBuilderDelegate<T> _buildSidekickBuilder(BuildContext context, _SidekickMission<T> mission,
       bool isSource, int length, int index, bool isLast) {
     return SidekickBuilderDelegate._internal(
         this,
