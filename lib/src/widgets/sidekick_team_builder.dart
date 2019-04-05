@@ -119,10 +119,10 @@ class StackViewState<T> extends State<StackView<T>>
     _targetList?.forEach((mission) => mission.dispose());
     _sourceList = List<_SidekickMission<T>>();
     _targetList = List<_SidekickMission<T>>();
-    _initList(_sourceList, widget.sourceList.reversed.toList(),
-        _sourceListPrefix);
-    _initList(_targetList, widget.targetList.reversed.toList(),
-        _targetListPrefix);
+    _initList(
+        _sourceList, widget.sourceList.reversed.toList(), _sourceListPrefix);
+    _initList(
+        _targetList, widget.targetList.reversed.toList(), _targetListPrefix);
   }
 
   void _initList(
@@ -347,7 +347,12 @@ class StackViewDel<T> {
         key: ObjectKey(_mission),
         tag: _tag,
         targetTag: _targetTag,
-        animationBuilder: animationBuilder,
+        animationBuilder: animationBuilder == null
+            ? (animation) => CurvedAnimation(
+                  parent: animation,
+                  curve: _isSource ? Curves.ease : FlippedCurve(Curves.ease),
+                )
+            : animationBuilder,
         createRectTween: createRectTween,
         flightShuttleBuilder: flightShuttleBuilder,
         placeholderBuilder: placeholderBuilder,
