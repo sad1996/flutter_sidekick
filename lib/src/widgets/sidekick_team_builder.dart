@@ -4,8 +4,8 @@ import 'package:flutter_sidekick/src/widgets/sidekick.dart';
 /// Signature for building a sidekick team.
 typedef SidekickTeamWidgetBuilder<T> = Widget Function(
   BuildContext context,
-  List<Widget> sourceBuilderDelegates,
-  List<Widget> targetBuilderDelegates,
+  List<SidekickBuilderDelegate<T>> sourceBuilderDelegates,
+  List<SidekickBuilderDelegate<T>> targetBuilderDelegates,
 );
 
 class _SidekickMission<T> {
