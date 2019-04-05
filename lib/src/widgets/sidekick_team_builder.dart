@@ -261,10 +261,10 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
                     context,
                     mission,
                     false,
-                _targetList.length,
-                _targetList.indexOf(mission),
-                _targetList.indexOf(mission) ==
-                    _targetList.indexOf(_targetList.last)))
+                    _targetList.length,
+                    _targetList.indexOf(mission),
+                    _targetList.indexOf(mission) ==
+                        _targetList.indexOf(_targetList.last)))
                 .toList());
       },
     );
@@ -419,8 +419,12 @@ class SidekickBuilderDelegate<T> {
   }
 
   getDirection(DragUpdateDetails gestureDetails) {
-    if (gestureDetails.globalPosition.dy < gestureStart) {
-      gestureDirection = 'bottomToTop';
+    if (gestureDetails.globalPosition.dy != null) {
+      if (gestureDetails.globalPosition.dy < gestureStart) {
+        gestureDirection = 'bottomToTop';
+      } else {
+        gestureDirection = 'topToBottom';
+      }
     } else {
       gestureDirection = 'topToBottom';
     }
