@@ -236,6 +236,34 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
         orElse: () => null);
   }
 
+  var gestureStart;
+  var gestureDirection;
+
+  void beginSwipe(bool isSource, BuildContext context,
+      DragStartDetails gestureDetails, dynamic builderDelegate) {
+    gestureStart = gestureDetails.globalPosition.dy;
+    if (gestureDirection == 'topToBottom' && isSource) {
+      print(gestureDirection);
+      move(builderDelegate.message);
+    }
+  }
+
+  void getDirection(DragUpdateDetails gestureDetails) {
+    if (gestureDetails.globalPosition.dy < gestureStart) {
+      gestureDirection = 'bottomToTop';
+    } else {
+      gestureDirection = 'topToBottom';
+    }
+  }
+
+  void endSwipe(bool isSource, BuildContext context,
+      DragEndDetails gestureDetails, dynamic builderDelegate) {
+    if (gestureDirection == 'bottomToTop' && !isSource) {
+      print(gestureDirection);
+      move(builderDelegate.message);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Builder(
