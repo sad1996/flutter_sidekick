@@ -4,8 +4,8 @@ import 'package:flutter_sidekick/src/widgets/sidekick.dart';
 /// Signature for building a sidekick team.
 typedef SidekickTeamWidgetBuilder<T> = Widget Function(
   BuildContext context,
-  List<SidekickBuilderDelegate<T>> sourceBuilderDelegates,
-  List<SidekickBuilderDelegate<T>> targetBuilderDelegates,
+  List<Widget> sourceBuilderDelegates,
+  List<Widget> targetBuilderDelegates,
 );
 
 class _SidekickMission<T> {
@@ -21,10 +21,12 @@ class _SidekickMission<T> {
   final SidekickController controller;
   bool inFlightToTheSource = false;
   bool inFlightToTheTarget = false;
+
   bool get inFlight => inFlightToTheSource || inFlightToTheTarget;
 
   void startFlight(SidekickFlightDirection direction) =>
       _setInFlight(direction, true);
+
   void endFlight(SidekickFlightDirection direction) =>
       _setInFlight(direction, false);
 
@@ -236,67 +238,50 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
         orElse: () => null);
   }
 
-  var gestureStart;
-  var gestureDirection;
-
-  void beginSwipe(bool isSource, BuildContext context,
-      DragStartDetails gestureDetails, dynamic builderDelegate) {
-    gestureStart = gestureDetails.globalPosition.dy;
-    if (gestureDirection == 'topToBottom' && isSource) {
-      print(gestureDirection);
-      move(builderDelegate.message);
-    }
-  }
-
-  void getDirection(DragUpdateDetails gestureDetails) {
-    if (gestureDetails.globalPosition.dy < gestureStart) {
-      gestureDirection = 'bottomToTop';
-    } else {
-      gestureDirection = 'topToBottom';
-    }
-  }
-
-  void endSwipe(bool isSource, BuildContext context,
-      DragEndDetails gestureDetails, dynamic builderDelegate) {
-    if (gestureDirection == 'bottomToTop' && !isSource) {
-      print(gestureDirection);
-      move(builderDelegate.message);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
         return widget.builder(
             context,
-            _sourceList
-                .map((mission) => _buildSidekickBuilder(
-                      context,
-                      mission,
-                      true,
-                    ))
-                .toList(),
-            _targetList
-                .map((mission) => _buildSidekickBuilder(
-                      context,
-                      mission,
-                      false,
-                    ))
-                .toList());
+            _sourceList.reversed.toList().map((mission) {
+              int index = _sourceList.indexOf(mission);
+              int lastIndex = _sourceList.indexOf(_sourceList.last);
+              return _buildSidekickBuilder(
+                  context,
+                  mission,
+                  true,
+                  _sourceList.length,
+                  index,
+                  index == lastIndex);
+            }).toList(),
+            _targetList.reversed.toList().map((mission) {
+              int index = _sourceList.indexOf(mission);
+              int firstIndex = _sourceList.indexOf(_sourceList.first);
+              int lastIndex = _sourceList.indexOf(_sourceList.last);
+              return _buildSidekickBuilder(
+                  context,
+                  mission,
+                  false,
+                  _sourceList.length,
+                  index,
+                  index == lastIndex);
+            }).toList());
       },
     );
   }
 
-  SidekickBuilderDelegate<T> _buildSidekickBuilder(
-      BuildContext context, _SidekickMission<T> mission, bool isSource) {
+  _buildSidekickBuilder(BuildContext context, _SidekickMission<T> mission,
+      bool isSource, int length, int index, bool isLast) {
     return SidekickBuilderDelegate._internal(
-      this,
-      mission,
-      _getTag(mission, isSource: isSource),
-      isSource ? _getTag(mission, isSource: false) : null,
-      isSource,
-    );
+        this,
+        mission,
+        _getTag(mission, isSource: isSource),
+        isSource ? _getTag(mission, isSource: false) : null,
+        isSource,
+        length,
+        index,
+        isLast);
   }
 
   String _getTag(_SidekickMission<T> mission, {bool isSource = true}) {
@@ -321,6 +306,9 @@ class SidekickBuilderDelegate<T> {
     this._tag,
     this._targetTag,
     this._isSource,
+    this._length,
+    this._index,
+    this._isLast,
   );
 
   /// The state of the [SidekickTeamBuilder] that created this delegate.
@@ -330,9 +318,15 @@ class SidekickBuilderDelegate<T> {
   final String _tag;
   final String _targetTag;
   final bool _isSource;
+  final int _length;
+  final int _index;
+  final bool _isLast;
 
   /// The message transferred by the [Sidekick].
   T get message => _mission.message;
+
+  var gestureStart;
+  var gestureDirection;
 
   /// Builds the [Sidekick] widget and its child.
   Widget build(
@@ -353,9 +347,85 @@ class SidekickBuilderDelegate<T> {
         createRectTween: createRectTween,
         flightShuttleBuilder: flightShuttleBuilder,
         placeholderBuilder: placeholderBuilder,
-        child: child,
+        child: _isSource
+            ? Container(
+                margin:
+                    EdgeInsets.only(top: double.parse('${_index + 2}0') / 1.5),
+                child: IgnorePointer(
+                  ignoring: !_isLast,
+                  child: GestureDetector(
+                    onVerticalDragStart: (gestureDetails) {
+                      if (_length != 1) {
+                        beginSwipe(_isSource, context, gestureDetails);
+                      }
+                    },
+                    onVerticalDragUpdate: (gestureDetails) =>
+                        getDirection(gestureDetails),
+                    onVerticalDragEnd: (gestureDetails) {
+                      endSwipe(true, context, gestureDetails);
+                    },
+                    onTap: () => _length == 1 ? null : state.move(message),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 5),
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.bounceInOut,
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : IgnorePointer(
+                ignoring: !_isLast,
+                child: GestureDetector(
+                  onVerticalDragStart: (gestureDetails) {
+                    beginSwipe(_isSource, context, gestureDetails);
+                  },
+                  onVerticalDragUpdate: (gestureDetails) =>
+                      getDirection(gestureDetails),
+                  onVerticalDragEnd: (gestureDetails) {
+                    endSwipe(_isSource, context, gestureDetails);
+                  },
+                  onTap: () {
+                    state.move(message);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        left: 2,
+                        right: 2,
+                        top: 8,
+                        bottom: double.parse('${_index}0') / 1.5),
+                    child: child,
+                  ),
+                ),
+              ),
       ),
     );
+  }
+
+  beginSwipe(
+      bool isSource, BuildContext context, DragStartDetails gestureDetails) {
+    gestureStart = gestureDetails.globalPosition.dy;
+    if (gestureDirection == 'topToBottom' && isSource) {
+      print(gestureDirection);
+      state.move(message);
+    }
+  }
+
+  getDirection(DragUpdateDetails gestureDetails) {
+    if (gestureDetails.globalPosition.dy < gestureStart) {
+      gestureDirection = 'bottomToTop';
+    } else {
+      gestureDirection = 'topToBottom';
+    }
+  }
+
+  endSwipe(bool isSource, BuildContext context, DragEndDetails gestureDetails) {
+    if (gestureDirection == 'bottomToTop' && !isSource) {
+      state.move(message);
+    }
   }
 
   double _getOpacity() {
