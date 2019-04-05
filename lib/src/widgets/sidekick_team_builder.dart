@@ -2,10 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_sidekick/src/widgets/sidekick.dart';
 
 /// Signature for building a sidekick team.
-typedef StackView<T> = Widget Function(
+typedef StackViewBuilder<T> = Widget Function(
   BuildContext context,
-  List<StackViewBuilder<T>> sourceBuilderDelegates,
-  List<StackViewBuilder<T>> targetBuilderDelegates,
+  List<StackViewDel<T>> sourceBuilderDelegates,
+  List<StackViewDel<T>> targetBuilderDelegates,
 );
 
 class _SidekickMission<T> {
@@ -48,44 +48,44 @@ class _SidekickMission<T> {
 /// This is useful when you have two widgets that contains multiple
 /// widgets and you want to be able to animate some widgets from one
 /// container (the source) to the other (the target) and vice-versa.
-class SidekickTeamBuilder<T> extends StatefulWidget {
-  SidekickTeamBuilder({
+class StackView<T> extends StatefulWidget {
+  StackView({
     Key key,
     @required this.builder,
-    this.initialSourceList,
-    this.initialTargetList,
+    this.sourceList,
+    this.targetList,
     this.animationDuration = const Duration(milliseconds: 300),
   })  : assert(animationDuration != null),
         super(key: key);
 
   /// The builder used to create the containers.
-  final StackView<T> builder;
+  final StackViewBuilder<T> builder;
 
   /// The initial items contained in the source container.
-  final List<T> initialSourceList;
+  final List<T> sourceList;
 
   /// The initial items contained in the target container.
-  final List<T> initialTargetList;
+  final List<T> targetList;
 
   /// The duration of the flying animation.
   final Duration animationDuration;
 
   /// The state from the closest instance of this class that encloses the given context.
-  static SidekickTeamBuilderState<T> of<T>(BuildContext context) {
+  static StackViewState<T> of<T>(BuildContext context) {
     assert(context != null);
-    final SidekickTeamBuilderState<T> result =
-        context.ancestorStateOfType(TypeMatcher<SidekickTeamBuilderState<T>>());
+    final StackViewState<T> result =
+        context.ancestorStateOfType(TypeMatcher<StackViewState<T>>());
     return result;
   }
 
   @override
-  SidekickTeamBuilderState<T> createState() => SidekickTeamBuilderState<T>();
+  StackViewState<T> createState() => StackViewState<T>();
 }
 
-/// State for [SidekickTeamBuilder].
+/// State for [StackView].
 ///
 /// Can animate widgets from one container to the other.
-class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
+class StackViewState<T> extends State<StackView<T>>
     with TickerProviderStateMixin {
   static const String _sourceListPrefix = 's_';
   static const String _targetListPrefix = 't_';
@@ -119,9 +119,9 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
     _targetList?.forEach((mission) => mission.dispose());
     _sourceList = List<_SidekickMission<T>>();
     _targetList = List<_SidekickMission<T>>();
-    _initList(_sourceList, widget.initialSourceList.reversed.toList(),
+    _initList(_sourceList, widget.sourceList.reversed.toList(),
         _sourceListPrefix);
-    _initList(_targetList, widget.initialTargetList.reversed.toList(),
+    _initList(_targetList, widget.targetList.reversed.toList(),
         _targetListPrefix);
   }
 
@@ -140,7 +140,7 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
     }
   }
 
-  void didUpdateWidget(covariant SidekickTeamBuilder<T> oldWidget) {
+  void didUpdateWidget(covariant StackView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _initLists();
   }
@@ -270,14 +270,14 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
     );
   }
 
-  StackViewBuilder<T> _buildSidekickBuilder(
+  StackViewDel<T> _buildSidekickBuilder(
       BuildContext context,
       _SidekickMission<T> mission,
       bool isSource,
       int length,
       int index,
       bool isLast) {
-    return StackViewBuilder._internal(
+    return StackViewDel._internal(
         this,
         mission,
         _getTag(mission, isSource: isSource),
@@ -303,8 +303,8 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
 }
 
 /// A delegate used to build a [Sidekick] and its child.
-class StackViewBuilder<T> {
-  StackViewBuilder._internal(
+class StackViewDel<T> {
+  StackViewDel._internal(
     this.state,
     this._mission,
     this._tag,
@@ -315,8 +315,8 @@ class StackViewBuilder<T> {
     this._isLast,
   );
 
-  /// The state of the [SidekickTeamBuilder] that created this delegate.
-  final SidekickTeamBuilderState<T> state;
+  /// The state of the [StackView] that created this delegate.
+  final StackViewState<T> state;
 
   final _SidekickMission<T> _mission;
   final String _tag;
