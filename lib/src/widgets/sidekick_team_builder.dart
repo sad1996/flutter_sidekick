@@ -419,12 +419,8 @@ class SidekickBuilderDelegate<T> {
   }
 
   getDirection(DragUpdateDetails gestureDetails) {
-    if (gestureDetails.globalPosition.dy != null) {
-      if (gestureDetails.globalPosition.dy < gestureStart) {
-        gestureDirection = 'bottomToTop';
-      } else {
-        gestureDirection = 'topToBottom';
-      }
+    if (gestureDetails.globalPosition.dy < gestureStart) {
+      gestureDirection = 'bottomToTop';
     } else {
       gestureDirection = 'topToBottom';
     }
