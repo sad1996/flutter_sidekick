@@ -119,8 +119,10 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
     _targetList?.forEach((mission) => mission.dispose());
     _sourceList = List<_SidekickMission<T>>();
     _targetList = List<_SidekickMission<T>>();
-    _initList(_sourceList, widget.initialSourceList, _sourceListPrefix);
-    _initList(_targetList, widget.initialTargetList, _targetListPrefix);
+    _initList(_sourceList, widget.initialSourceList.reversed.toList(),
+        _sourceListPrefix);
+    _initList(_targetList, widget.initialTargetList.reversed.toList(),
+        _targetListPrefix);
   }
 
   void _initList(
@@ -244,34 +246,37 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
       builder: (context) {
         return widget.builder(
             context,
-            _sourceList.reversed.toList().map<SidekickBuilderDelegate<T>>((mission) {
-              int index = _sourceList.indexOf(mission);
-              int lastIndex = _sourceList.indexOf(_sourceList.last);
-              return _buildSidekickBuilder(
-                  context,
-                  mission,
-                  true,
-                  _sourceList.length,
-                  index,
-                  index == lastIndex);
-            }).toList(),
-            _targetList.reversed.toList().map<SidekickBuilderDelegate<T>>((mission) {
-              int index = _sourceList.indexOf(mission);
-              int lastIndex = _sourceList.indexOf(_sourceList.last);
-              return _buildSidekickBuilder(
-                  context,
-                  mission,
-                  false,
-                  _sourceList.length,
-                  index,
-                  index == lastIndex);
-            }).toList());
+            _sourceList
+                .map((mission) => _buildSidekickBuilder(
+                    context,
+                    mission,
+                    true,
+                    _sourceList.length,
+                    _sourceList.indexOf(mission),
+                    _sourceList.indexOf(mission) ==
+                        _sourceList.indexOf(_sourceList.last)))
+                .toList(),
+            _targetList
+                .map((mission) => _buildSidekickBuilder(
+                    context,
+                    mission,
+                    false,
+                    _sourceList.length,
+                    _sourceList.indexOf(mission),
+                    _sourceList.indexOf(mission) ==
+                        _sourceList.indexOf(_sourceList.last)))
+                .toList());
       },
     );
   }
 
-  SidekickBuilderDelegate<T> _buildSidekickBuilder(BuildContext context, _SidekickMission<T> mission,
-      bool isSource, int length, int index, bool isLast) {
+  SidekickBuilderDelegate<T> _buildSidekickBuilder(
+      BuildContext context,
+      _SidekickMission<T> mission,
+      bool isSource,
+      int length,
+      int index,
+      bool isLast) {
     return SidekickBuilderDelegate._internal(
         this,
         mission,
