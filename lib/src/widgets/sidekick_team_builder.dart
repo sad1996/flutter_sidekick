@@ -244,7 +244,7 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
       builder: (context) {
         return widget.builder(
             context,
-            _sourceList.reversed.toList().map((mission) {
+            _sourceList.reversed.toList().map<SidekickBuilderDelegate<T>>((mission) {
               int index = _sourceList.indexOf(mission);
               int lastIndex = _sourceList.indexOf(_sourceList.last);
               return _buildSidekickBuilder(
@@ -255,9 +255,8 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
                   index,
                   index == lastIndex);
             }).toList(),
-            _targetList.reversed.toList().map((mission) {
+            _targetList.reversed.toList().map<SidekickBuilderDelegate<T>>((mission) {
               int index = _sourceList.indexOf(mission);
-              int firstIndex = _sourceList.indexOf(_sourceList.first);
               int lastIndex = _sourceList.indexOf(_sourceList.last);
               return _buildSidekickBuilder(
                   context,
