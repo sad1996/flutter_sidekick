@@ -261,10 +261,10 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
                     context,
                     mission,
                     false,
-                    _sourceList.length,
-                    _sourceList.indexOf(mission),
-                    _sourceList.indexOf(mission) ==
-                        _sourceList.indexOf(_sourceList.last)))
+                _targetList.length,
+                _targetList.indexOf(mission),
+                _targetList.indexOf(mission) ==
+                    _targetList.indexOf(_targetList.last)))
                 .toList());
       },
     );
