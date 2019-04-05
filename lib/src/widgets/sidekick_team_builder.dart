@@ -2,10 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_sidekick/src/widgets/sidekick.dart';
 
 /// Signature for building a sidekick team.
-typedef SidekickTeamWidgetBuilder<T> = Widget Function(
+typedef StackView<T> = Widget Function(
   BuildContext context,
-  List<SidekickBuilderDelegate<T>> sourceBuilderDelegates,
-  List<SidekickBuilderDelegate<T>> targetBuilderDelegates,
+  List<StackViewBuilder<T>> sourceBuilderDelegates,
+  List<StackViewBuilder<T>> targetBuilderDelegates,
 );
 
 class _SidekickMission<T> {
@@ -59,7 +59,7 @@ class SidekickTeamBuilder<T> extends StatefulWidget {
         super(key: key);
 
   /// The builder used to create the containers.
-  final SidekickTeamWidgetBuilder<T> builder;
+  final StackView<T> builder;
 
   /// The initial items contained in the source container.
   final List<T> initialSourceList;
@@ -270,14 +270,14 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
     );
   }
 
-  SidekickBuilderDelegate<T> _buildSidekickBuilder(
+  StackViewBuilder<T> _buildSidekickBuilder(
       BuildContext context,
       _SidekickMission<T> mission,
       bool isSource,
       int length,
       int index,
       bool isLast) {
-    return SidekickBuilderDelegate._internal(
+    return StackViewBuilder._internal(
         this,
         mission,
         _getTag(mission, isSource: isSource),
@@ -303,8 +303,8 @@ class SidekickTeamBuilderState<T> extends State<SidekickTeamBuilder<T>>
 }
 
 /// A delegate used to build a [Sidekick] and its child.
-class SidekickBuilderDelegate<T> {
-  SidekickBuilderDelegate._internal(
+class StackViewBuilder<T> {
+  StackViewBuilder._internal(
     this.state,
     this._mission,
     this._tag,
