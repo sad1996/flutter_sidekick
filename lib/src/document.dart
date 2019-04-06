@@ -19,7 +19,7 @@ class Document extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: type == 'link'
           ? FlatButton(
-              onPressed: _launchURL(url),
+              onPressed: _launchURL,
               child: Text('Click here for more info.',
                   style: TextStyle(
                       decoration: TextDecoration.underline,
@@ -67,7 +67,7 @@ class Document extends StatelessWidget {
     );
   }
 
-  _launchURL(String url) async {
+  _launchURL() async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
