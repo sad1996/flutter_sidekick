@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter_youtube:
   cached_network_image:
+  url_launcher:
 
   flutter:
     sdk: flutter
