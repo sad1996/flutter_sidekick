@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sidekick/src/widgets/sidekick.dart';
+import 'package:stack/src/sidekick.dart';
 
 /// Signature for building a sidekick team.
 typedef StackViewBuilder<T> = Widget Function(
