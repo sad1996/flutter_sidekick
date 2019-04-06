@@ -48,7 +48,6 @@ class Document extends StatelessWidget {
                               Icons.play_arrow,
                             ),
                             onPressed: () {
-                              print(_videoThumbURL(url));
                               FlutterYoutube.playYoutubeVideoByUrl(
                                   apiKey:
                                       'AIzaSyDBDzMvT95Hevkvk3y_bdZk7vn4kNqlzIc',
