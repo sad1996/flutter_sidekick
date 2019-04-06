@@ -4,17 +4,18 @@ import 'package:flutter_sidekick/src/widgets/sidekick.dart';
 
 /// Signature for building a sidekick team.
 typedef StackViewBuilder<T> = Widget Function(
-    BuildContext context,
-    List<StackViewDel<T>> sourceBuilderDelegates,
-    List<StackViewDel<T>> targetBuilderDelegates,
-    );
+  BuildContext context,
+  List<StackViewDel<T>> sourceBuilderDelegates,
+  List<StackViewDel<T>> targetBuilderDelegates,
+);
 
 class _SidekickMission<T> {
-  _SidekickMission(this.id,
-      this.message,
-      TickerProvider vsync,
-      Duration duration,)
-      : controller = SidekickController(vsync: vsync, duration: duration);
+  _SidekickMission(
+    this.id,
+    this.message,
+    TickerProvider vsync,
+    Duration duration,
+  ) : controller = SidekickController(vsync: vsync, duration: duration);
 
   final String id;
   final T message;
@@ -55,8 +56,7 @@ class StackView<T> extends StatefulWidget {
     this.sourceList,
     this.targetList,
     this.animationDuration = const Duration(milliseconds: 300),
-  })
-      : assert(animationDuration != null),
+  })  : assert(animationDuration != null),
         super(key: key);
 
   /// The builder used to create the containers.
@@ -75,7 +75,7 @@ class StackView<T> extends StatefulWidget {
   static StackViewState<T> of<T>(BuildContext context) {
     assert(context != null);
     final StackViewState<T> result =
-    context.ancestorStateOfType(TypeMatcher<StackViewState<T>>());
+        context.ancestorStateOfType(TypeMatcher<StackViewState<T>>());
     return result;
   }
 
@@ -126,8 +126,8 @@ class StackViewState<T> extends State<StackView<T>>
         _targetList, widget.targetList.reversed.toList(), _targetListPrefix);
   }
 
-  void _initList(List<_SidekickMission<T>> list, List<T> initialList,
-      String prefix) {
+  void _initList(
+      List<_SidekickMission<T>> list, List<T> initialList, String prefix) {
     if (initialList != null) {
       for (var i = 0; i < initialList.length; i++) {
         final String id = '$prefix$i';
@@ -187,9 +187,9 @@ class StackViewState<T> extends State<StackView<T>>
   /// position in the other container.
   Future<void> move(T message) {
     final _SidekickMission<T> sourceMission =
-    _getFirstMissionInList(_sourceList, message);
+        _getFirstMissionInList(_sourceList, message);
     final _SidekickMission<T> targetMission =
-    _getFirstMissionInList(_targetList, message);
+        _getFirstMissionInList(_targetList, message);
 
     SidekickFlightDirection direction;
     _SidekickMission<T> mission;
@@ -235,8 +235,8 @@ class StackViewState<T> extends State<StackView<T>>
         : _sourceList;
   }
 
-  _SidekickMission<T> _getFirstMissionInList(List<_SidekickMission<T>> list,
-      T message) {
+  _SidekickMission<T> _getFirstMissionInList(
+      List<_SidekickMission<T>> list, T message) {
     return list.firstWhere((mission) => identical(mission.message, message),
         orElse: () => null);
   }
@@ -244,41 +244,55 @@ class StackViewState<T> extends State<StackView<T>>
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(dividerColor: Colors.transparent), child: Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        padding: EdgeInsets.all(5),
-        child: SafeArea(child: Builder(
-          builder: (context) {
-            return widget.builder(
-                context,
-                _sourceList
-                    .map((mission) =>
-                    _buildSidekickBuilder(
+      data: ThemeData(dividerColor: Colors.transparent),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(left: 5, right: 5, bottom: 12.0),
+              child: SafeArea(
+                child: Builder(
+                  builder: (context) {
+                    return widget.builder(
                         context,
-                        mission,
-                        true,
-                        _sourceList.length,
-                        _sourceList.indexOf(mission),
-                        _sourceList.indexOf(mission) ==
-                            _sourceList.indexOf(_sourceList.last)))
-                    .toList(),
-                _targetList
-                    .map((mission) =>
-                    _buildSidekickBuilder(
-                        context,
-                        mission,
-                        false,
-                        _targetList.length,
-                        _targetList.indexOf(mission),
-                        _targetList.indexOf(mission) ==
-                            _targetList.indexOf(_targetList.last)))
-                    .toList());
-          },
-        ),),),),);
+                        _sourceList
+                            .map((mission) => _buildSidekickBuilder(
+                                context,
+                                mission,
+                                true,
+                                _sourceList.length,
+                                _sourceList.indexOf(mission),
+                                _sourceList.indexOf(mission) ==
+                                    _sourceList.indexOf(_sourceList.last)))
+                            .toList(),
+                        _targetList
+                            .map((mission) => _buildSidekickBuilder(
+                                context,
+                                mission,
+                                false,
+                                _targetList.length,
+                                _targetList.indexOf(mission),
+                                _targetList.indexOf(mission) ==
+                                    _targetList.indexOf(_targetList.last)))
+                            .toList());
+                  },
+                ),
+              ),
+            ),
+            AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              brightness: Brightness.dark,
+            )
+          ],
+        ),
+      ),
+    );
   }
 
-  StackViewDel<T> _buildSidekickBuilder(BuildContext context,
+  StackViewDel<T> _buildSidekickBuilder(
+      BuildContext context,
       _SidekickMission<T> mission,
       bool isSource,
       int length,
@@ -311,14 +325,16 @@ class StackViewState<T> extends State<StackView<T>>
 
 /// A delegate used to build a [Sidekick] and its child.
 class StackViewDel<T> {
-  StackViewDel._internal(this.state,
-      this._mission,
-      this._tag,
-      this._targetTag,
-      this._isSource,
-      this._length,
-      this._index,
-      this._isLast,);
+  StackViewDel._internal(
+    this.state,
+    this._mission,
+    this._tag,
+    this._targetTag,
+    this._isSource,
+    this._length,
+    this._index,
+    this._isLast,
+  );
 
   /// The state of the [StackView] that created this delegate.
   final StackViewState<T> state;
@@ -338,13 +354,14 @@ class StackViewDel<T> {
   var gestureDirection;
 
   /// Builds the [Sidekick] widget and its child.
-  Widget build(BuildContext context,
-      Widget child, {
-        CreateRectTween createRectTween,
-        SidekickFlightShuttleBuilder flightShuttleBuilder,
-        TransitionBuilder placeholderBuilder,
-        SidekickAnimationBuilder animationBuilder,
-      }) {
+  Widget build(
+    BuildContext context,
+    Widget child, {
+    CreateRectTween createRectTween,
+    SidekickFlightShuttleBuilder flightShuttleBuilder,
+    TransitionBuilder placeholderBuilder,
+    SidekickAnimationBuilder animationBuilder,
+  }) {
     return Opacity(
       opacity: _getOpacity(),
       child: Sidekick(
@@ -352,75 +369,74 @@ class StackViewDel<T> {
         tag: _tag,
         targetTag: _targetTag,
         animationBuilder: animationBuilder == null
-            ? (animation) =>
-            CurvedAnimation(
-              parent: animation,
-              curve: _isSource ? Curves.ease : FlippedCurve(Curves.ease),
-            )
+            ? (animation) => CurvedAnimation(
+                  parent: animation,
+                  curve: _isSource ? Curves.ease : FlippedCurve(Curves.ease),
+                )
             : animationBuilder,
         createRectTween: createRectTween,
         flightShuttleBuilder: flightShuttleBuilder,
         placeholderBuilder: placeholderBuilder,
         child: _isSource
             ? Container(
-          margin:
-          EdgeInsets.only(top: double.parse('${_index + 2}0') / 1.5),
-          child: IgnorePointer(
-            ignoring: !_isLast,
-            child: GestureDetector(
-              onVerticalDragStart: (gestureDetails) {
-                if (_length != 1) {
-                  beginSwipe(_isSource, context, gestureDetails);
-                }
-              },
-              onVerticalDragUpdate: (gestureDetails) =>
-                  getDirection(gestureDetails),
-              onVerticalDragEnd: (gestureDetails) {
-                endSwipe(true, context, gestureDetails);
-              },
-              onTap: () => _length == 1 ? null : state.move(message),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 2, horizontal: 5),
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.bounceInOut,
-                  child: child,
+                margin:
+                    EdgeInsets.only(top: double.parse('${_index + 2}0') / 1.5),
+                child: IgnorePointer(
+                  ignoring: !_isLast,
+                  child: GestureDetector(
+                    onVerticalDragStart: (gestureDetails) {
+                      if (_length != 1) {
+                        beginSwipe(_isSource, context, gestureDetails);
+                      }
+                    },
+                    onVerticalDragUpdate: (gestureDetails) =>
+                        getDirection(gestureDetails),
+                    onVerticalDragEnd: (gestureDetails) {
+                      endSwipe(true, context, gestureDetails);
+                    },
+                    onTap: () => _length == 1 ? null : state.move(message),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 5),
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.bounceInOut,
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : IgnorePointer(
+                ignoring: !_isLast,
+                child: GestureDetector(
+                  onVerticalDragStart: (gestureDetails) {
+                    beginSwipe(_isSource, context, gestureDetails);
+                  },
+                  onVerticalDragUpdate: (gestureDetails) =>
+                      getDirection(gestureDetails),
+                  onVerticalDragEnd: (gestureDetails) {
+                    endSwipe(_isSource, context, gestureDetails);
+                  },
+                  onTap: () {
+                    state.move(message);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        left: 2,
+                        right: 2,
+                        top: 8,
+                        bottom: double.parse('${_index}0') / 1.5),
+                    child: child,
+                  ),
                 ),
               ),
-            ),
-          ),
-        )
-            : IgnorePointer(
-          ignoring: !_isLast,
-          child: GestureDetector(
-            onVerticalDragStart: (gestureDetails) {
-              beginSwipe(_isSource, context, gestureDetails);
-            },
-            onVerticalDragUpdate: (gestureDetails) =>
-                getDirection(gestureDetails),
-            onVerticalDragEnd: (gestureDetails) {
-              endSwipe(_isSource, context, gestureDetails);
-            },
-            onTap: () {
-              state.move(message);
-            },
-            child: Container(
-              padding: EdgeInsets.only(
-                  left: 2,
-                  right: 2,
-                  top: 8,
-                  bottom: double.parse('${_index}0') / 1.5),
-              child: child,
-            ),
-          ),
-        ),
       ),
     );
   }
 
-  beginSwipe(bool isSource, BuildContext context,
-      DragStartDetails gestureDetails) {
+  beginSwipe(
+      bool isSource, BuildContext context, DragStartDetails gestureDetails) {
     gestureStart = gestureDetails.globalPosition.dy;
     if (gestureDirection == 'topToBottom' && isSource) {
       print(gestureDirection);
