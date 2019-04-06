@@ -281,11 +281,11 @@ class StackViewState<T> extends State<StackView<T>>
                 ),
               ),
             ),
-            AppBar(
+            Container(height: 0.0, child: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
               brightness: Brightness.dark,
-            )
+            ),)
           ],
         ),
       ),
