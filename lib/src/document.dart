@@ -18,7 +18,7 @@ class Document extends StatelessWidget {
       margin: EdgeInsets.only(top: 20),
       width: MediaQuery.of(context).size.width,
       child: type == 'link'
-          ? LinkTextSpan(url: url, text: 'Click here for more info.')
+          ? RichTextView(text: url)
           : ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: AspectRatio(
