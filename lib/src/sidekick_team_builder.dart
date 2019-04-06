@@ -49,10 +49,10 @@ class _SidekickMission<T> {
 /// This is useful when you have two widgets that contains multiple
 /// widgets and you want to be able to animate some widgets from one
 /// container (the source) to the other (the target) and vice-versa.
-class StackView<T> extends StatefulWidget {
-  StackView({
+class SV<T> extends StatefulWidget {
+  SV({
     Key key,
-    @required this.builder,
+    @required this.view,
     this.sList,
     this.tList,
     this.animationDuration = const Duration(milliseconds: 300),
@@ -60,7 +60,7 @@ class StackView<T> extends StatefulWidget {
         super(key: key);
 
   /// The builder used to create the containers.
-  final StackViewBuilder<T> builder;
+  final StackViewBuilder<T> view;
 
   /// The initial items contained in the source container.
   final List<T> sList;
@@ -72,21 +72,21 @@ class StackView<T> extends StatefulWidget {
   final Duration animationDuration;
 
   /// The state from the closest instance of this class that encloses the given context.
-  static StackViewState<T> of<T>(BuildContext context) {
+  static SVState<T> of<T>(BuildContext context) {
     assert(context != null);
-    final StackViewState<T> result =
-    context.ancestorStateOfType(TypeMatcher<StackViewState<T>>());
+    final SVState<T> result =
+    context.ancestorStateOfType(TypeMatcher<SVState<T>>());
     return result;
   }
 
   @override
-  StackViewState<T> createState() => StackViewState<T>();
+  SVState<T> createState() => SVState<T>();
 }
 
-/// State for [StackView].
+/// State for [SV].
 ///
 /// Can animate widgets from one container to the other.
-class StackViewState<T> extends State<StackView<T>>
+class SVState<T> extends State<SV<T>>
     with TickerProviderStateMixin {
   static const String _sourceListPrefix = 's_';
   static const String _targetListPrefix = 't_';
@@ -141,7 +141,7 @@ class StackViewState<T> extends State<StackView<T>>
     }
   }
 
-  void didUpdateWidget(covariant StackView<T> oldWidget) {
+  void didUpdateWidget(covariant SV<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _initLists();
   }
@@ -255,7 +255,7 @@ class StackViewState<T> extends State<StackView<T>>
                 bottom: false,
                 child: Builder(
                   builder: (context) {
-                    return widget.builder(
+                    return widget.view(
                         context,
                         _sourceList
                             .map((mission) => _buildSidekickBuilder(
@@ -337,8 +337,8 @@ class Del<T> {
       this._isLast,
       );
 
-  /// The state of the [StackView] that created this delegate.
-  final StackViewState<T> state;
+  /// The state of the [SV] that created this delegate.
+  final SVState<T> state;
 
   final _SidekickMission<T> _mission;
   final String _tag;
