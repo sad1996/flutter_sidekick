@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class FluTube extends StatelessWidget {
-  FluTube(this.videoUrl, this.apiKey);
+class FV extends StatelessWidget {
+  FV(this.videoUrl, this.apiKey);
 
   /// Youtube URL of the video
   final String videoUrl;
