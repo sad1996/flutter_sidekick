@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class FV extends StatelessWidget {
-  FV(this.videoUrl);
+class Document extends StatelessWidget {
+  Document(this.videoUrl);
 
-  /// Youtube URL of the video
   final String videoUrl;
 
   @override

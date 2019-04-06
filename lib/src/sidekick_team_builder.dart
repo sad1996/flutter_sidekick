@@ -5,8 +5,8 @@ import 'package:stack/src/sidekick.dart';
 /// Signature for building a sidekick team.
 typedef StackViewBuilder<T> = Widget Function(
     BuildContext context,
-    List<Del<T>> sourceBuilderDelegates,
-    List<Del<T>> targetBuilderDelegates,
+    List<Delegate<T>> sourceBuilderDelegates,
+    List<Delegate<T>> targetBuilderDelegates,
     );
 
 class _SidekickMission<T> {
@@ -49,8 +49,8 @@ class _SidekickMission<T> {
 /// This is useful when you have two widgets that contains multiple
 /// widgets and you want to be able to animate some widgets from one
 /// container (the source) to the other (the target) and vice-versa.
-class SV<T> extends StatefulWidget {
-  SV({
+class StackView<T> extends StatefulWidget {
+  StackView({
     Key key,
     @required this.view,
     this.sList,
@@ -72,21 +72,21 @@ class SV<T> extends StatefulWidget {
   final Duration animationDuration;
 
   /// The state from the closest instance of this class that encloses the given context.
-  static SVState<T> of<T>(BuildContext context) {
+  static StackViewState<T> of<T>(BuildContext context) {
     assert(context != null);
-    final SVState<T> result =
-    context.ancestorStateOfType(TypeMatcher<SVState<T>>());
+    final StackViewState<T> result =
+    context.ancestorStateOfType(TypeMatcher<StackViewState<T>>());
     return result;
   }
 
   @override
-  SVState<T> createState() => SVState<T>();
+  StackViewState<T> createState() => StackViewState<T>();
 }
 
-/// State for [SV].
+/// State for [StackView].
 ///
 /// Can animate widgets from one container to the other.
-class SVState<T> extends State<SV<T>>
+class StackViewState<T> extends State<StackView<T>>
     with TickerProviderStateMixin {
   static const String _sourceListPrefix = 's_';
   static const String _targetListPrefix = 't_';
@@ -141,7 +141,7 @@ class SVState<T> extends State<SV<T>>
     }
   }
 
-  void didUpdateWidget(covariant SV<T> oldWidget) {
+  void didUpdateWidget(covariant StackView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _initLists();
   }
@@ -244,7 +244,7 @@ class SVState<T> extends State<SV<T>>
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(dividerColor: Colors.transparent),
+      data: ThemeData(dividerColor: Colors.transparent, ),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
@@ -292,14 +292,14 @@ class SVState<T> extends State<SV<T>>
     );
   }
 
-  Del<T> _buildSidekickBuilder(
+  Delegate<T> _buildSidekickBuilder(
       BuildContext context,
       _SidekickMission<T> mission,
       bool isSource,
       int length,
       int index,
       bool isLast) {
-    return Del._internal(
+    return Delegate._internal(
         this,
         mission,
         _getTag(mission, isSource: isSource),
@@ -325,8 +325,8 @@ class SVState<T> extends State<SV<T>>
 }
 
 /// A delegate used to build a [Sidekick] and its child.
-class Del<T> {
-  Del._internal(
+class Delegate<T> {
+  Delegate._internal(
       this.state,
       this._mission,
       this._tag,
@@ -337,8 +337,8 @@ class Del<T> {
       this._isLast,
       );
 
-  /// The state of the [SV] that created this delegate.
-  final SVState<T> state;
+  /// The state of the [StackView] that created this delegate.
+  final StackViewState<T> state;
 
   final _SidekickMission<T> _mission;
   final String _tag;
