@@ -3,11 +3,10 @@ import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class FV extends StatelessWidget {
-  FV(this.videoUrl, this.apiKey);
+  FV(this.videoUrl);
 
   /// Youtube URL of the video
   final String videoUrl;
-  final String apiKey;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +40,7 @@ class FV extends StatelessWidget {
                       ),
                       onPressed: () {
                         FlutterYoutube.playYoutubeVideoByUrl(
-                            apiKey: apiKey,
+                            apiKey: 'AIzaSyDBDzMvT95Hevkvk3y_bdZk7vn4kNqlzIc',
                             videoUrl: videoUrl,
                             autoPlay: true, //default falase
                             fullScreen: true //default false
