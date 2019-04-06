@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:stack/src/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Document extends StatelessWidget {
   Document(this.url, this.type);
@@ -18,7 +18,13 @@ class Document extends StatelessWidget {
       margin: EdgeInsets.only(top: 20),
       width: MediaQuery.of(context).size.width,
       child: type == 'link'
-          ? RichTextView(text: url)
+          ? FlatButton(
+              onPressed: _launchURL(url),
+              child: Text('Click here for more info.',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blue)),
+            )
           : ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: AspectRatio(
@@ -59,6 +65,14 @@ class Document extends StatelessWidget {
               ),
             ),
     );
+  }
+
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   String _videoThumbURL(String yt) {
