@@ -241,54 +241,52 @@ class StackViewState<T> extends State<StackView<T>>
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(dividerColor: Colors.transparent),
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 5, right: 5, bottom: 12.0),
-              child: SafeArea(
-                bottom: false,
-                child: Builder(
-                  builder: (context) {
-                    return widget.view(
-                        context,
-                        _sourceList
-                            .map((mission) => _buildSidekickBuilder(
-                                context,
-                                mission,
-                                true,
-                                _sourceList.length,
-                                _sourceList.indexOf(mission),
-                                _sourceList.indexOf(mission) ==
-                                    _sourceList.indexOf(_sourceList.last)))
-                            .toList(),
-                        _targetList
-                            .map((mission) => _buildSidekickBuilder(
-                                context,
-                                mission,
-                                false,
-                                _targetList.length,
-                                _targetList.indexOf(mission),
-                                _targetList.indexOf(mission) ==
-                                    _targetList.indexOf(_targetList.last)))
-                            .toList());
-                  },
-                ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 5, right: 5, bottom: 12.0),
+            child: SafeArea(
+              top: true,
+              bottom: false,
+              child: Builder(
+                builder: (context) {
+                  return widget.view(
+                      context,
+                      _sourceList
+                          .map((mission) => _buildSidekickBuilder(
+                              context,
+                              mission,
+                              true,
+                              _sourceList.length,
+                              _sourceList.indexOf(mission),
+                              _sourceList.indexOf(mission) ==
+                                  _sourceList.indexOf(_sourceList.last)))
+                          .toList(),
+                      _targetList
+                          .map((mission) => _buildSidekickBuilder(
+                              context,
+                              mission,
+                              false,
+                              _targetList.length,
+                              _targetList.indexOf(mission),
+                              _targetList.indexOf(mission) ==
+                                  _targetList.indexOf(_targetList.last)))
+                          .toList());
+                },
               ),
             ),
-            Container(
-              height: 0.0,
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                brightness: Brightness.dark,
-              ),
-            )
-          ],
-        ),
+          ),
+          Container(
+            height: 0.0,
+            child: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              brightness: Brightness.dark,
+            ),
+          )
+        ],
       ),
     );
   }
