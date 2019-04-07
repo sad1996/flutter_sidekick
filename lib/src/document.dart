@@ -4,8 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Document extends StatelessWidget {
-  Document(this.url, this.type);
+  Document(this.apiKey, this.url, this.type);
 
+  final String apiKey;
   final String url;
   final String type;
 
@@ -49,8 +50,7 @@ class Document extends StatelessWidget {
                             ),
                             onPressed: () {
                               FlutterYoutube.playYoutubeVideoByUrl(
-                                  apiKey:
-                                      'AIzaSyDBDzMvT95Hevkvk3y_bdZk7vn4kNqlzIc',
+                                  apiKey: apiKey,
                                   videoUrl: url,
                                   autoPlay: true, //default falase
                                   fullScreen: true //default false
